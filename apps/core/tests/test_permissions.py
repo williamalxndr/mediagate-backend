@@ -17,12 +17,12 @@ class IsAdminApiUserTests(TestCase):
         return self.permission.has_permission(request, None)
 
     def test_anonymous_user_is_denied(self):
-        self.assertFalse(self.has_permission_for(AnonymousUser()))
+        assert not self.has_permission_for(AnonymousUser())
 
     def test_non_staff_non_admin_group_user_is_denied(self):
         user = User.objects.create_user(username="viewer", password="password")
 
-        self.assertFalse(self.has_permission_for(user))
+        assert not self.has_permission_for(user)
 
     def test_staff_user_is_allowed(self):
         user = User.objects.create_user(
@@ -31,11 +31,11 @@ class IsAdminApiUserTests(TestCase):
             is_staff=True,
         )
 
-        self.assertTrue(self.has_permission_for(user))
+        assert self.has_permission_for(user)
 
     def test_admin_group_user_is_allowed(self):
         ensure_default_roles()
         user = User.objects.create_user(username="manager", password="password")
         user.groups.add(Group.objects.get(name=ROLE_ADMIN))
 
-        self.assertTrue(self.has_permission_for(user))
+        assert self.has_permission_for(user)

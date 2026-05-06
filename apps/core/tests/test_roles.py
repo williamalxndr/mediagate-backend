@@ -12,14 +12,14 @@ class RoleTests(TestCase):
     def test_ensure_default_roles_creates_admin_group_only(self):
         ensure_default_roles()
 
-        self.assertTrue(Group.objects.filter(name=ROLE_ADMIN).exists())
+        assert Group.objects.filter(name=ROLE_ADMIN).exists()
 
     def test_admin_role_check_uses_group_membership(self):
         ensure_default_roles()
         user = User.objects.create_user(username="manager", password="password")
         user.groups.add(Group.objects.get(name=ROLE_ADMIN))
 
-        self.assertTrue(is_admin_user(user))
+        assert is_admin_user(user)
 
     def test_staff_user_is_admin_user(self):
         user = User.objects.create_user(
@@ -28,7 +28,7 @@ class RoleTests(TestCase):
             is_staff=True,
         )
 
-        self.assertTrue(is_admin_user(user))
+        assert is_admin_user(user)
 
     def test_superuser_is_admin_user_even_without_group(self):
         user = User.objects.create_superuser(
@@ -37,14 +37,14 @@ class RoleTests(TestCase):
             password="password",
         )
 
-        self.assertTrue(is_admin_user(user))
+        assert is_admin_user(user)
 
     def test_anonymous_user_has_no_role(self):
         anonymous = AnonymousUser()
 
-        self.assertFalse(is_admin_user(anonymous))
+        assert not is_admin_user(anonymous)
 
     def test_non_staff_user_without_admin_group_is_not_admin(self):
         user = User.objects.create_user(username="viewer", password="password")
 
-        self.assertFalse(is_admin_user(user))
+        assert not is_admin_user(user)

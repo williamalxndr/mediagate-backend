@@ -6,7 +6,7 @@ The boto3 S3 client is mocked — no network calls are made.
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -57,7 +57,7 @@ class GenerateSignedUrlSuccessTests(SimpleTestCase):
             assert kwargs["ExpiresIn"] == 300
 
     def test_expires_at_is_now_plus_ttl_in_utc(self):
-        fixed_now = datetime(2026, 5, 7, 10, 0, 0, tzinfo=timezone.utc)
+        fixed_now = datetime(2026, 5, 7, 10, 0, 0, tzinfo=UTC)
         with (
             patch("common.storage.client.get_s3_client") as get_client,
             patch("common.storage.signing.timezone.now", return_value=fixed_now),
@@ -100,19 +100,19 @@ class GenerateSignedUrlInputValidationTests(SimpleTestCase):
 
     def test_empty_file_path_raises_value_error(self):
         with patch("common.storage.client.get_s3_client") as get_client:
-            with pytest.raises(ValueError):
+            with pytest.raises(ValueError, match="must not be empty"):
                 generate_signed_url("")
             get_client.assert_not_called()
 
     def test_file_path_starting_with_slash_raises_value_error(self):
         with patch("common.storage.client.get_s3_client") as get_client:
-            with pytest.raises(ValueError):
+            with pytest.raises(ValueError, match="must not start with '/'"):
                 generate_signed_url("/events/launch/video.mp4")
             get_client.assert_not_called()
 
     def test_file_path_with_nul_byte_raises_value_error(self):
         with patch("common.storage.client.get_s3_client") as get_client:
-            with pytest.raises(ValueError):
+            with pytest.raises(ValueError, match="must not contain a NUL byte"):
                 generate_signed_url("events/\x00/video.mp4")
             get_client.assert_not_called()
 
