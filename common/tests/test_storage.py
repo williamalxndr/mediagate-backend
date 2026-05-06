@@ -11,7 +11,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 from botocore.exceptions import ClientError, EndpointConnectionError
-from django.test import override_settings
+from django.test import SimpleTestCase, override_settings
 from django.utils import timezone as dj_timezone
 
 from common.storage import SignedUrl, StorageError, generate_signed_url
@@ -25,7 +25,7 @@ from common.storage import SignedUrl, StorageError, generate_signed_url
     AWS_S3_ENDPOINT_URL="",
     SIGNED_URL_TTL_SECONDS=300,
 )
-class GenerateSignedUrlSuccessTests:
+class GenerateSignedUrlSuccessTests(SimpleTestCase):
     """Happy-path behaviour."""
 
     def test_returns_signed_url_dataclass(self):
@@ -95,7 +95,7 @@ class GenerateSignedUrlSuccessTests:
     AWS_SECRET_ACCESS_KEY="s",
     SIGNED_URL_TTL_SECONDS=300,
 )
-class GenerateSignedUrlInputValidationTests:
+class GenerateSignedUrlInputValidationTests(SimpleTestCase):
     """ValueError cases — caught before any boto3 call."""
 
     def test_empty_file_path_raises_value_error(self):
@@ -117,7 +117,7 @@ class GenerateSignedUrlInputValidationTests:
             get_client.assert_not_called()
 
 
-class GenerateSignedUrlConfigErrorTests:
+class GenerateSignedUrlConfigErrorTests(SimpleTestCase):
     """StorageError when configuration is incomplete."""
 
     @override_settings(AWS_STORAGE_BUCKET_NAME="")
@@ -132,7 +132,7 @@ class GenerateSignedUrlConfigErrorTests:
     AWS_SECRET_ACCESS_KEY="s",
     SIGNED_URL_TTL_SECONDS=300,
 )
-class GenerateSignedUrlBoto3ErrorTests:
+class GenerateSignedUrlBoto3ErrorTests(SimpleTestCase):
     """boto3 errors are wrapped as StorageError, with original chained as __cause__."""
 
     def test_client_error_is_wrapped(self):
@@ -165,7 +165,7 @@ class GenerateSignedUrlBoto3ErrorTests:
     AWS_SECRET_ACCESS_KEY="s",
     SIGNED_URL_TTL_SECONDS=300,
 )
-class S3ClientFactoryTests:
+class S3ClientFactoryTests(SimpleTestCase):
     """get_s3_client uses settings, including MinIO endpoint_url when set."""
 
     @override_settings(AWS_S3_ENDPOINT_URL="http://minio.local:9000")
