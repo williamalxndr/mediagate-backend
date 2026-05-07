@@ -31,7 +31,7 @@ class LoginView(APIView):
             )
         except NonAdminError:
             return Response(
-                {"detail": "User is not an admin."},
+                {"detail": "User is not a staff member."},
                 status=status.HTTP_403_FORBIDDEN,
             )
         login(request, user)

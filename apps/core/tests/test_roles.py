@@ -9,12 +9,12 @@ from apps.core.roles import (
 
 
 class RoleTests(TestCase):
-    def test_ensure_default_roles_creates_admin_group_only(self):
+    def test_ensure_default_roles_creates_staff_group_only(self):
         ensure_default_roles()
 
         assert Group.objects.filter(name=ROLE_ADMIN).exists()
 
-    def test_admin_role_check_uses_group_membership(self):
+    def test_staff_role_check_uses_group_membership(self):
         ensure_default_roles()
         user = User.objects.create_user(username="manager", password="password")
         user.groups.add(Group.objects.get(name=ROLE_ADMIN))

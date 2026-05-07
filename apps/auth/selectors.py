@@ -7,5 +7,5 @@ def get_me_payload(user) -> dict:
         "id": user.id,
         "username": user.username,
         "email": user.email or "",
-        "is_admin": is_admin_user(user),
+        "is_staff": is_admin_user(user),
     }

@@ -1,6 +1,6 @@
 from django.contrib.auth.models import Group
 
-ROLE_ADMIN = "admin"
+ROLE_ADMIN = "staff"
 
 ROLE_CHOICES = (ROLE_ADMIN,)
 

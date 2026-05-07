@@ -23,5 +23,5 @@ def authenticate_admin(request, username: str, password: str):
     if user is None:
         raise AuthenticationError("Invalid username or password.")
     if not is_admin_user(user):
-        raise NonAdminError("User is not an admin.")
+        raise NonAdminError("User is not a staff member.")
     return user

@@ -84,7 +84,7 @@ class GetMePayloadTests:
                 "id": 42,
                 "username": "testuser",
                 "email": "test@example.com",
-                "is_admin": True,
+                "is_staff": True,
             }
         finally:
             selectors_module.is_admin_user = original
@@ -118,7 +118,7 @@ class LoginViewTests:
                 "id": 1,
                 "username": "admin",
                 "email": "admin@example.com",
-                "is_admin": True,
+                "is_staff": True,
             }
         )
 
@@ -131,7 +131,7 @@ class LoginViewTests:
             response = self.view(request)
             assert response.status_code == status.HTTP_200_OK
             assert response.data["username"] == "admin"
-            assert response.data["is_admin"] is True
+            assert response.data["is_staff"] is True
             views_module.login.assert_called_once()
         finally:
             views_module.login = original_login
@@ -234,7 +234,7 @@ class MeViewTests:
                 "id": 1,
                 "username": "admin",
                 "email": "admin@example.com",
-                "is_admin": True,
+                "is_staff": True,
             }
         )
 

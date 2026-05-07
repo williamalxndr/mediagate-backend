@@ -33,7 +33,7 @@ class IsAdminApiUserTests(TestCase):
 
         assert self.has_permission_for(user)
 
-    def test_admin_group_user_is_allowed(self):
+    def test_staff_group_user_is_allowed(self):
         ensure_default_roles()
         user = User.objects.create_user(username="manager", password="password")
         user.groups.add(Group.objects.get(name=ROLE_ADMIN))

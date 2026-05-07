@@ -28,14 +28,14 @@ class Command(BaseCommand):
             )
 
         # Ensure admin group exists
-        admin_group, _ = Group.objects.get_or_create(name=ROLE_ADMIN)
+        staff_group, _ = Group.objects.get_or_create(name=ROLE_ADMIN)
 
         user, created = User.objects.update_or_create(
             username=username,
             defaults={"email": email, "is_staff": True},
         )
         user.set_password(password)
-        user.groups.add(admin_group)
+        user.groups.add(staff_group)
         user.save()
 
         if created:

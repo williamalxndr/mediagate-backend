@@ -3,13 +3,13 @@ from django.db import migrations
 
 def keep_admin_remove_user_role(apps, schema_editor):
     group = apps.get_model("auth", "Group")
-    group.objects.get_or_create(name="admin")
-    group.objects.filter(name="user").delete()
+    group.objects.get_or_create(name="staff")
+    group.objects.filter(name__in=("admin", "user")).delete()
 
 
 def restore_user_role(apps, schema_editor):
     group = apps.get_model("auth", "Group")
-    group.objects.get_or_create(name="user")
+    group.objects.get_or_create(name="admin")
 
 
 class Migration(migrations.Migration):
