@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "corsheaders",
     "apps.core",
+    "apps.auth",
     "apps.events",
     "apps.content",
     "apps.access",
