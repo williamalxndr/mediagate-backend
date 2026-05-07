@@ -57,7 +57,29 @@ class Content(TimeStampedModel):
         related_name="contents",
         on_delete=models.CASCADE,
     )
+    title = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text="Display name, e.g. 'FOTO+VIDEO'.",
+    )
     file_path = models.CharField(max_length=1024)
+    file = models.FileField(
+        upload_to="contents/%Y/%m/",
+        null=True,
+        blank=True,
+        help_text="Local file (demo mode). Production uses file_path against object storage.",
+    )
+    cover = models.ImageField(
+        upload_to="covers/%Y/%m/",
+        null=True,
+        blank=True,
+        help_text="Preview image shown on the public catalog.",
+    )
+    price = models.PositiveIntegerField(
+        null=True,
+        blank=True,
+        help_text="Price in IDR (e.g. 4500000 for Rp 4.500.000).",
+    )
     duration_limit = models.PositiveIntegerField(help_text="Duration limit in seconds.")
 
     class Meta:
@@ -67,7 +89,7 @@ class Content(TimeStampedModel):
         ]
 
     def __str__(self) -> str:
-        return self.file_path
+        return self.title or self.file_path
 
     @property
     def duration_limit_delta(self) -> timedelta:

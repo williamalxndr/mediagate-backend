@@ -15,6 +15,7 @@ class AccessPayloadSerializer(serializers.Serializer):
     signed_url_expires_at = serializers.DateTimeField(read_only=True)
     access_expires_at = serializers.DateTimeField(read_only=True)
     remaining_seconds = serializers.IntegerField(read_only=True)
+    content_type = serializers.CharField(read_only=True, allow_null=True)
     content = serializers.SerializerMethodField()
 
     def get_content(self, obj):
@@ -27,8 +28,15 @@ class AccessPayloadSerializer(serializers.Serializer):
 # ---- Admin token management serializers ----
 
 
+class _TokenOrderSummarySerializer(serializers.Serializer):
+    id = serializers.IntegerField(read_only=True)
+    customer_name = serializers.CharField(read_only=True)
+    whatsapp_e164 = serializers.CharField(read_only=True)
+
+
 class AccessTokenListSerializer(serializers.ModelSerializer):
     content_id = serializers.IntegerField(source="content.id", read_only=True)
+    order = serializers.SerializerMethodField()
 
     class Meta:
         model = AccessToken
@@ -40,10 +48,17 @@ class AccessTokenListSerializer(serializers.ModelSerializer):
             "started_at",
             "max_duration",
             "is_revoked",
+            "order",
             "created_at",
             "updated_at",
         ]
         read_only_fields = fields
+
+    def get_order(self, obj):
+        order = getattr(obj, "order", None)
+        if order is None:
+            return None
+        return _TokenOrderSummarySerializer(order).data
 
 
 class AccessTokenCreateSerializer(serializers.Serializer):
