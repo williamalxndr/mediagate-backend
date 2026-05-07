@@ -1,4 +1,9 @@
+from django.urls import path
+
+from .views import AccessView
+
+app_name = "access"
 
 urlpatterns = [
-    # Access API routes will be added with the access feature.
+    path("", AccessView.as_view(), name="access"),
 ]
