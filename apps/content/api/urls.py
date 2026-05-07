@@ -1,4 +1,9 @@
+from django.urls import path
+
+from .views import ContentListCreateView
+
+app_name = "content"
 
 urlpatterns = [
-    # Content API routes will be added with the content feature.
+    path("", ContentListCreateView.as_view(), name="content-list-create"),
 ]
