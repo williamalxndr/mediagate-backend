@@ -7,10 +7,10 @@ from datetime import timedelta
 from django.db import transaction
 from django.utils import timezone
 
-from apps.access.services import create_access_token
+from apps.access.services import create_access_token, revoke_access_token
 from apps.core.models import Order
 
-from .selectors import OrderAlreadyFulfilledError
+from .selectors import OrderAlreadyFulfilledError, OrderNotFulfilledError
 
 DEFAULT_TOKEN_LIFETIME = timedelta(days=7)
 DEFAULT_MAX_DURATION_SECONDS = 24 * 3600
@@ -68,6 +68,25 @@ def issue_token_for_order(order: Order) -> Order:
     order.access_token = token
     order.status = Order.STATUS_FULFILLED
     order.save(update_fields=["access_token", "status", "updated_at"])
+    return order
+
+
+@transaction.atomic
+def regenerate_token_for_order(order: Order) -> Order:
+    if order.status != Order.STATUS_FULFILLED or not order.access_token_id:
+        raise OrderNotFulfilledError("Order has no token to regenerate.")
+    if not order.content_id:
+        raise OrderMissingContentError(
+            "Order has no content; cannot regenerate token."
+        )
+    revoke_access_token(order.access_token)
+    new_token = create_access_token(
+        content_id=order.content_id,
+        expires_at=timezone.now() + DEFAULT_TOKEN_LIFETIME,
+        max_duration=DEFAULT_MAX_DURATION_SECONDS,
+    )
+    order.access_token = new_token
+    order.save(update_fields=["access_token", "updated_at"])
     return order
 
 

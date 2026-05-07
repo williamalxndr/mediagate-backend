@@ -8,6 +8,7 @@ from common.permissions import IsAdminApiUser
 from ..selectors import (
     OrderAlreadyFulfilledError,
     OrderNotFoundError,
+    OrderNotFulfilledError,
     get_order_by_id,
     list_orders,
 )
@@ -16,6 +17,7 @@ from ..services import (
     cancel_order,
     create_order,
     issue_token_for_order,
+    regenerate_token_for_order,
 )
 from .serializers import (
     OrderAdminListSerializer,
@@ -92,6 +94,32 @@ class OrderIssueTokenView(APIView):
                 status=status.HTTP_409_CONFLICT,
             )
         except OrderMissingContentError as exc:
+            return Response(
+                {"detail": str(exc)},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        return Response(
+            OrderAdminListSerializer(order).data,
+            status=status.HTTP_201_CREATED,
+        )
+
+
+class OrderRegenerateTokenView(APIView):
+    """POST /api/orders/admin/<pk>/regenerate-token/ — revoke + reissue."""
+
+    permission_classes = [IsAdminApiUser]
+
+    def post(self, request, pk):
+        try:
+            order = get_order_by_id(pk)
+        except OrderNotFoundError:
+            return Response(
+                {"detail": "Order not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        try:
+            order = regenerate_token_for_order(order)
+        except (OrderNotFulfilledError, OrderMissingContentError) as exc:
             return Response(
                 {"detail": str(exc)},
                 status=status.HTTP_400_BAD_REQUEST,

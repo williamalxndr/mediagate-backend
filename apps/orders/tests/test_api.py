@@ -138,6 +138,29 @@ class OrderAdminViewTests(TestCase):
         second = self.client.post(url, {}, format="json")
         assert second.status_code == status.HTTP_409_CONFLICT
 
+    def test_regenerate_token_creates_new_token_and_revokes_old(self):
+        self._auth()
+        issue_url = reverse("orders:order-issue-token", args=[self.order.id])
+        self.client.post(issue_url, {}, format="json")
+        self.order.refresh_from_db()
+        old_token = self.order.access_token
+        regen_url = reverse(
+            "orders:order-regenerate-token", args=[self.order.id]
+        )
+        response = self.client.post(regen_url, {}, format="json")
+        assert response.status_code == status.HTTP_201_CREATED
+        self.order.refresh_from_db()
+        assert self.order.access_token_id != old_token.id
+        assert self.order.access_token.content_id == self.content.id
+        old_token.refresh_from_db()
+        assert old_token.is_revoked is True
+
+    def test_regenerate_pending_order_rejected(self):
+        self._auth()
+        url = reverse("orders:order-regenerate-token", args=[self.order.id])
+        response = self.client.post(url, {}, format="json")
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
     def test_cancel_pending_order(self):
         self._auth()
         url = reverse("orders:order-cancel", args=[self.order.id])

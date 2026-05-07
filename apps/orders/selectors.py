@@ -11,6 +11,10 @@ class OrderAlreadyFulfilledError(Exception):
     pass
 
 
+class OrderNotFulfilledError(Exception):
+    pass
+
+
 def list_orders(status: str | None = None):
     qs = Order.objects.select_related(
         "access_token",

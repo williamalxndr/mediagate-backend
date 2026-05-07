@@ -6,6 +6,7 @@ from .views import (
     OrderCancelView,
     OrderCreateView,
     OrderIssueTokenView,
+    OrderRegenerateTokenView,
 )
 
 app_name = "orders"
@@ -22,6 +23,11 @@ urlpatterns = [
         "admin/<int:pk>/issue-token/",
         OrderIssueTokenView.as_view(),
         name="order-issue-token",
+    ),
+    path(
+        "admin/<int:pk>/regenerate-token/",
+        OrderRegenerateTokenView.as_view(),
+        name="order-regenerate-token",
     ),
     path(
         "admin/<int:pk>/cancel/",
