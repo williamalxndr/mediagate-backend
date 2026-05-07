@@ -1,4 +1,9 @@
+from django.urls import path
+
+from .views import EventListCreateView
+
+app_name = "events"
 
 urlpatterns = [
-    # Event API routes will be added with the event feature.
+    path("", EventListCreateView.as_view(), name="event-list-create"),
 ]
