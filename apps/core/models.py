@@ -140,3 +140,50 @@ class AccessToken(TimeStampedModel):
     @property
     def is_expired(self) -> bool:
         return timezone.now() >= self.effective_expires_at
+
+
+class Order(TimeStampedModel):
+    STATUS_PENDING = "pending"
+    STATUS_FULFILLED = "fulfilled"
+    STATUS_CANCELLED = "cancelled"
+    STATUS_CHOICES = [
+        (STATUS_PENDING, "Pending"),
+        (STATUS_FULFILLED, "Fulfilled"),
+        (STATUS_CANCELLED, "Cancelled"),
+    ]
+
+    customer_name = models.CharField(max_length=255)
+    whatsapp_number = models.CharField(max_length=32)
+    whatsapp_e164 = models.CharField(max_length=32)
+    content = models.ForeignKey(
+        Content,
+        on_delete=models.PROTECT,
+        related_name="orders",
+        null=True,
+        blank=True,
+    )
+    status = models.CharField(
+        max_length=16,
+        choices=STATUS_CHOICES,
+        default=STATUS_PENDING,
+    )
+    access_token = models.OneToOneField(
+        AccessToken,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="order",
+    )
+    notes = models.TextField(blank=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+        indexes = [
+            models.Index(
+                fields=["status", "-created_at"],
+                name="core_order_status_created_idx",
+            ),
+        ]
+
+    def __str__(self) -> str:
+        return f"{self.customer_name} ({self.get_status_display()})"
