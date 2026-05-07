@@ -14,6 +14,7 @@ from apps.access.selectors import (
     get_access_token_by_token,
     record_access_start,
 )
+from apps.core.models import AccessToken
 from common.storage import StorageError, generate_signed_url
 
 
@@ -73,6 +74,22 @@ def resolve_access(token_str: str) -> AccessPayload:
         content_id=token.content_id,
         event_id=token.content.event_id,
     )
+
+
+def create_access_token(content_id: int, expires_at, max_duration: int):
+    """Create and return a new AccessToken for the given content."""
+    return AccessToken.objects.create(
+        content_id=content_id,
+        expires_at=expires_at,
+        max_duration=max_duration,
+    )
+
+
+def revoke_access_token(token: AccessToken):
+    """Mark an access token as revoked."""
+    token.is_revoked = True
+    token.save(update_fields=["is_revoked", "updated_at"])
+    return token
 
 
 def validate_token_access_early(token) -> None:

@@ -24,6 +24,23 @@ class EventInactiveError(Exception):
     pass
 
 
+def list_access_tokens():
+    """Return all access tokens ordered by creation date descending."""
+    return (
+        AccessToken.objects.select_related("content__event")
+        .all()
+        .order_by("-created_at")
+    )
+
+
+def get_access_token_by_id(token_id: int) -> AccessToken:
+    """Look up an AccessToken by ID. Raises TokenNotFoundError if missing."""
+    try:
+        return AccessToken.objects.select_related("content__event").get(pk=token_id)
+    except AccessToken.DoesNotExist:
+        raise TokenNotFoundError("Token not found.")
+
+
 def get_access_token_by_token(token_str: str) -> AccessToken:
     """Look up an AccessToken by its token string. Raises TokenNotFoundError if missing."""
     try:

@@ -1,5 +1,10 @@
 from rest_framework import serializers
 
+from apps.core.models import AccessToken, Content
+
+
+# ---- Public access endpoint serializers ----
+
 
 class AccessTokenQuerySerializer(serializers.Serializer):
     token = serializers.CharField(required=True)
@@ -17,3 +22,41 @@ class AccessPayloadSerializer(serializers.Serializer):
             "id": obj.content_id,
             "event_id": obj.event_id,
         }
+
+
+# ---- Admin token management serializers ----
+
+
+class AccessTokenListSerializer(serializers.ModelSerializer):
+    content_id = serializers.IntegerField(source="content.id", read_only=True)
+
+    class Meta:
+        model = AccessToken
+        fields = [
+            "id",
+            "token",
+            "content_id",
+            "expires_at",
+            "started_at",
+            "max_duration",
+            "is_revoked",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = fields
+
+
+class AccessTokenCreateSerializer(serializers.Serializer):
+    content_id = serializers.IntegerField()
+    expires_at = serializers.DateTimeField()
+    max_duration = serializers.IntegerField(min_value=1)
+
+    def validate_content_id(self, value):
+        if not Content.objects.filter(pk=value).exists():
+            raise serializers.ValidationError("Content not found.")
+        return value
+
+
+class RevokeResponseSerializer(serializers.Serializer):
+    id = serializers.IntegerField(read_only=True)
+    is_revoked = serializers.BooleanField(read_only=True)
