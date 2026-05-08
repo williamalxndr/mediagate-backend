@@ -7,6 +7,6 @@ CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1:3000",
 ]
 
-REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"] += [  # noqa: F405
+REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"] += [  # type: ignore[operator]  # noqa: F405
     "rest_framework.renderers.BrowsableAPIRenderer",
 ]

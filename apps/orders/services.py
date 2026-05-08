@@ -74,6 +74,7 @@ def regenerate_token_for_order(order: Order) -> Order:
         raise OrderNotFulfilledError("Order has no token to regenerate.")
     if not order.content_id:
         raise OrderMissingContentError("Order has no content; cannot regenerate token.")
+    assert order.access_token is not None
     revoke_access_token(order.access_token)
     new_token = create_access_token(
         content_id=order.content_id,

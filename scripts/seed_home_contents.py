@@ -68,9 +68,9 @@ print(f"OK  Event: {event.name}")
 for c in CONTENTS:
     content = Content.objects.create(
         event=event,
-        title=c["title"],
-        file_path=c["file_path"],
-        price=c["price"],
+        title=str(c["title"]),
+        file_path=str(c["file_path"]),
+        price=int(c["price"]) if c["price"] is not None else None,
         duration_limit=ONE_WEEK,
     )
     print(f"    └─ {content.title} (Rp {content.price:,})")

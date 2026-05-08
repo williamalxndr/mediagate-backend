@@ -9,4 +9,6 @@ urlpatterns = [
 ]
 
 # MVP: Django serves uploaded media from MEDIA_ROOT. Swap to S3/CDN for scale.
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += static(  # type: ignore[arg-type]
+    settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
+)
