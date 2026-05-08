@@ -21,7 +21,9 @@ class ContentListCreateView(APIView):
 
     def get(self, request):
         contents = list_contents()
-        serializer = ContentSerializer(contents, many=True)
+        serializer = ContentSerializer(
+            contents, many=True, context={"request": request}
+        )
         return Response({"results": serializer.data})
 
     def post(self, request):
@@ -55,5 +57,9 @@ class ContentPublicListView(APIView):
             .order_by("-event__start_time")
         )
         return Response(
-            {"results": ContentPublicSerializer(contents, many=True).data}
+            {
+                "results": ContentPublicSerializer(
+                    contents, many=True, context={"request": request}
+                ).data
+            }
         )

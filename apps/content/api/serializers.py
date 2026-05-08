@@ -1,6 +1,9 @@
+from django.conf import settings
 from rest_framework import serializers
 
 from apps.core.models import Content, Event
+
+DEFAULT_COVER_URL = settings.MEDIA_URL + "demo/content/sample.png"
 
 
 class ContentPublicSerializer(serializers.ModelSerializer):
@@ -24,9 +27,9 @@ class ContentPublicSerializer(serializers.ModelSerializer):
         read_only_fields = fields
 
     def get_cover_url(self, obj):
-        if obj.cover:
-            return obj.cover.url
-        return None
+        request = self.context.get("request")
+        url = obj.cover.url if obj.cover else DEFAULT_COVER_URL
+        return request.build_absolute_uri(url) if request else url
 
     def get_price_display(self, obj):
         if obj.price:
@@ -65,9 +68,9 @@ class ContentSerializer(serializers.ModelSerializer):
         return bool(obj.cover)
 
     def get_cover_url(self, obj):
-        if obj.cover:
-            return obj.cover.url
-        return None
+        request = self.context.get("request")
+        url = obj.cover.url if obj.cover else DEFAULT_COVER_URL
+        return request.build_absolute_uri(url) if request else url
 
 
 class ContentCreateSerializer(serializers.Serializer):
