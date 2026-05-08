@@ -1,4 +1,5 @@
 """Selector unit tests for access tokens."""
+
 from datetime import timedelta
 
 import pytest

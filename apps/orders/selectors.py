@@ -33,5 +33,5 @@ def get_order_by_id(pk: int) -> Order:
             "access_token__content",
             "access_token__content__event",
         ).get(pk=pk)
-    except Order.DoesNotExist:
-        raise OrderNotFoundError("Order not found.")
+    except Order.DoesNotExist as exc:
+        raise OrderNotFoundError("Order not found.") from exc

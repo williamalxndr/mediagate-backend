@@ -4,15 +4,19 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('core', '0003_remove_user_role'),
+        ("core", "0003_remove_user_role"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='content',
-            name='file',
-            field=models.FileField(blank=True, help_text='Local file (demo mode). Production uses file_path against object storage.', null=True, upload_to='contents/%Y/%m/'),
+            model_name="content",
+            name="file",
+            field=models.FileField(
+                blank=True,
+                help_text="Local file (demo mode). Production uses file_path against object storage.",
+                null=True,
+                upload_to="contents/%Y/%m/",
+            ),
         ),
     ]

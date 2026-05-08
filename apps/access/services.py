@@ -3,9 +3,11 @@ from __future__ import annotations
 import mimetypes
 from dataclasses import dataclass
 from datetime import datetime, timedelta
+from pathlib import Path
 from urllib.parse import quote
 
 from django.conf import settings
+from django.core.files.base import ContentFile
 from django.utils import timezone
 
 from apps.access.selectors import (
@@ -17,12 +19,8 @@ from apps.access.selectors import (
     get_access_token_by_token,
     record_access_start,
 )
-from pathlib import Path
-
-from django.core.files.base import ContentFile
-
 from apps.core.models import AccessToken, Content, Event
-from common.storage import StorageError, generate_signed_url
+from common.storage import generate_signed_url
 
 DEMO_EVENT_NAME = "Demo Event (auto)"
 DEMO_VIDEO_DIR = "demo"  # under MEDIA_ROOT
@@ -85,9 +83,7 @@ def _ensure_demo_content() -> Content:
         defaults={"duration_limit": 3600},
     )
     if created or not content.file:
-        content.file.save(
-            "auto-hello.txt", ContentFile(DEMO_FALLBACK_BODY), save=True
-        )
+        content.file.save("auto-hello.txt", ContentFile(DEMO_FALLBACK_BODY), save=True)
     return content
 
 

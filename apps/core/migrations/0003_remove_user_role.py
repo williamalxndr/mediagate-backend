@@ -13,7 +13,6 @@ def restore_user_role(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("auth", "0012_alter_user_first_name_max_length"),
         ("core", "0002_create_default_roles"),

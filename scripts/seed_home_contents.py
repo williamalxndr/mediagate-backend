@@ -11,6 +11,7 @@ Note on duration_limit semantics: it represents how long the viewer has to
 Run from backend/:
     .venv/bin/python scripts/seed_home_contents.py
 """
+
 import os
 import sys
 from datetime import timedelta

@@ -1,4 +1,5 @@
 """API tests for the orders endpoints."""
+
 from datetime import timedelta
 
 from django.test import TestCase, override_settings
@@ -144,9 +145,7 @@ class OrderAdminViewTests(TestCase):
         self.client.post(issue_url, {}, format="json")
         self.order.refresh_from_db()
         old_token = self.order.access_token
-        regen_url = reverse(
-            "orders:order-regenerate-token", args=[self.order.id]
-        )
+        regen_url = reverse("orders:order-regenerate-token", args=[self.order.id])
         response = self.client.post(regen_url, {}, format="json")
         assert response.status_code == status.HTTP_201_CREATED
         self.order.refresh_from_db()

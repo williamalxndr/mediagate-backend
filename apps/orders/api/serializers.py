@@ -14,7 +14,7 @@ class OrderCreateSerializer(serializers.Serializer):
         try:
             normalize_whatsapp(value)
         except InvalidWhatsAppNumberError as exc:
-            raise serializers.ValidationError(str(exc))
+            raise serializers.ValidationError(str(exc)) from exc
         return value
 
     def validate_content_id(self, value):
@@ -70,5 +70,3 @@ class OrderAdminListSerializer(serializers.ModelSerializer):
         if not obj.access_token_id:
             return None
         return _OrderAccessTokenSerializer(obj.access_token).data
-
-

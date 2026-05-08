@@ -32,9 +32,7 @@ from .serializers import (
     AccessTokenCreateSerializer,
     AccessTokenListSerializer,
     AccessTokenQuerySerializer,
-    RevokeResponseSerializer,
 )
-
 
 # ---- Public access endpoint ----
 

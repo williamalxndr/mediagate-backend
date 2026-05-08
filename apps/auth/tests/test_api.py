@@ -102,8 +102,8 @@ class LoginViewTests:
         user.email = "admin@example.com"
 
         import apps.auth.api.views as views_module
-        import apps.auth.services as services_module
         import apps.auth.selectors as selectors_module
+        import apps.auth.services as services_module
 
         original_login = views_module.login
         original_auth = services_module.authenticate

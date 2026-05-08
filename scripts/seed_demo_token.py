@@ -4,6 +4,7 @@ and AccessToken so the /download flow can be tested end-to-end.
 Run from backend/:
     .venv/bin/python scripts/seed_demo_token.py
 """
+
 import os
 import sys
 from datetime import timedelta
@@ -46,8 +47,10 @@ content, created = Content.objects.get_or_create(
 if created or not content.file:
     content.file.save(
         "hello.txt",
-        ContentFile(b"Hello from the demo file. If you can read this, the "
-                    b"/download?token=... flow works end-to-end.\n"),
+        ContentFile(
+            b"Hello from the demo file. If you can read this, the "
+            b"/download?token=... flow works end-to-end.\n"
+        ),
         save=True,
     )
 

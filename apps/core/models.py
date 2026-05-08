@@ -4,6 +4,7 @@ All database models live in this app so schema ownership stays in one place.
 Domain apps should import these models and keep their business logic in
 selectors/services/API modules.
 """
+
 from datetime import timedelta
 from secrets import token_urlsafe
 
@@ -67,7 +68,9 @@ class Content(TimeStampedModel):
         upload_to="contents/%Y/%m/",
         null=True,
         blank=True,
-        help_text="Local file (demo mode). Production uses file_path against object storage.",
+        help_text=(
+            "Local file (demo mode). Production uses file_path against object storage."
+        ),
     )
     cover = models.ImageField(
         upload_to="covers/%Y/%m/",

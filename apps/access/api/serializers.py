@@ -2,7 +2,6 @@ from rest_framework import serializers
 
 from apps.core.models import AccessToken, Content
 
-
 # ---- Public access endpoint serializers ----
 
 

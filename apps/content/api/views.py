@@ -9,7 +9,11 @@ from apps.content.services import create_content
 from apps.core.models import Content
 from common.permissions import IsAdminApiUser
 
-from .serializers import ContentCreateSerializer, ContentPublicSerializer, ContentSerializer
+from .serializers import (
+    ContentCreateSerializer,
+    ContentPublicSerializer,
+    ContentSerializer,
+)
 
 
 class ContentListCreateView(APIView):

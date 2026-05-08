@@ -8,7 +8,9 @@ DEFAULT_COVER_URL = settings.MEDIA_URL + "demo/content/sample.png"
 
 class ContentPublicSerializer(serializers.ModelSerializer):
     event_name = serializers.CharField(source="event.name", read_only=True)
-    event_start_time = serializers.DateTimeField(source="event.start_time", read_only=True)
+    event_start_time = serializers.DateTimeField(
+        source="event.start_time", read_only=True
+    )
     cover_url = serializers.SerializerMethodField()
     price_display = serializers.SerializerMethodField()
 
@@ -59,7 +61,14 @@ class ContentSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         ]
-        read_only_fields = ["id", "has_file", "has_cover", "cover_url", "created_at", "updated_at"]
+        read_only_fields = [
+            "id",
+            "has_file",
+            "has_cover",
+            "cover_url",
+            "created_at",
+            "updated_at",
+        ]
 
     def get_has_file(self, obj) -> bool:
         return bool(obj.file)

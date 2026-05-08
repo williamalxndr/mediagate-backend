@@ -52,9 +52,7 @@ class OrderAdminListView(APIView):
     def get(self, request):
         status_filter = request.query_params.get("status") or None
         orders = list_orders(status=status_filter)
-        return Response(
-            {"results": OrderAdminListSerializer(orders, many=True).data}
-        )
+        return Response({"results": OrderAdminListSerializer(orders, many=True).data})
 
 
 class OrderAdminDetailView(APIView):

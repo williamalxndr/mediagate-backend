@@ -1,16 +1,15 @@
 """API tests for the public access endpoint and admin token management."""
-from datetime import timedelta
-from unittest.mock import MagicMock, patch
 
-import pytest
+from datetime import timedelta
+from unittest.mock import patch
+
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from apps.access.selectors import TokenNotFoundError
-from apps.access.services import AccessDeniedError, AccessPayload
+from apps.access.services import AccessPayload
 from apps.core.models import AccessToken, Content, Event
 
 
@@ -191,4 +190,3 @@ class AccessTokenAdminViewTests(TestCase):
         url = reverse("access:token-revoke", args=[99999])
         response = self.client.patch(url, {}, format="json")
         assert response.status_code == status.HTTP_404_NOT_FOUND
-

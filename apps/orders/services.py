@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import re
-
 from datetime import timedelta
 
 from django.db import transaction
@@ -57,9 +56,7 @@ def issue_token_for_order(order: Order) -> Order:
     if order.status == Order.STATUS_CANCELLED:
         raise OrderAlreadyFulfilledError("Order is cancelled.")
     if not order.content_id:
-        raise OrderMissingContentError(
-            "Order has no content; cannot issue a token."
-        )
+        raise OrderMissingContentError("Order has no content; cannot issue a token.")
     token = create_access_token(
         content_id=order.content_id,
         expires_at=timezone.now() + DEFAULT_TOKEN_LIFETIME,
@@ -76,9 +73,7 @@ def regenerate_token_for_order(order: Order) -> Order:
     if order.status != Order.STATUS_FULFILLED or not order.access_token_id:
         raise OrderNotFulfilledError("Order has no token to regenerate.")
     if not order.content_id:
-        raise OrderMissingContentError(
-            "Order has no content; cannot regenerate token."
-        )
+        raise OrderMissingContentError("Order has no content; cannot regenerate token.")
     revoke_access_token(order.access_token)
     new_token = create_access_token(
         content_id=order.content_id,

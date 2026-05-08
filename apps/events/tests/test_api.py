@@ -1,4 +1,5 @@
 """API tests for events."""
+
 from datetime import timedelta
 
 from django.test import TestCase
@@ -13,13 +14,21 @@ from apps.core.models import Event
 class EventViewTests(TestCase):
     def setUp(self):
         self.client = APIClient()
-        self.admin_user = type("AdminUser", (), {
-            "is_authenticated": True,
-            "is_staff": True,
-        })()
-        self.anonymous_user = type("AnonUser", (), {
-            "is_authenticated": False,
-        })()
+        self.admin_user = type(
+            "AdminUser",
+            (),
+            {
+                "is_authenticated": True,
+                "is_staff": True,
+            },
+        )()
+        self.anonymous_user = type(
+            "AnonUser",
+            (),
+            {
+                "is_authenticated": False,
+            },
+        )()
         self.url = reverse("events:event-list-create")
 
     def _authenticate(self, user):
@@ -31,12 +40,24 @@ class EventViewTests(TestCase):
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
         # Non-staff → 403
-        non_staff = type("NonStaff", (), {
-            "is_authenticated": True,
-            "is_staff": False,
-            "is_superuser": False,
-            "groups": type("Groups", (), {"filter": lambda *a, **kw: type("QS", (), {"exists": lambda *a: False})()})(),
-        })()
+        non_staff = type(
+            "NonStaff",
+            (),
+            {
+                "is_authenticated": True,
+                "is_staff": False,
+                "is_superuser": False,
+                "groups": type(
+                    "Groups",
+                    (),
+                    {
+                        "filter": lambda *a, **kw: type(
+                            "QS", (), {"exists": lambda *a: False}
+                        )()
+                    },
+                )(),
+            },
+        )()
         self._authenticate(non_staff)
         response = self.client.get(self.url)
         assert response.status_code == status.HTTP_403_FORBIDDEN

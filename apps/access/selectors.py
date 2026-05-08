@@ -1,11 +1,9 @@
 from __future__ import annotations
 
-from datetime import timedelta
-
 from django.db import transaction
 from django.utils import timezone
 
-from apps.core.models import AccessToken, Content
+from apps.core.models import AccessToken
 
 
 class TokenNotFoundError(Exception):
@@ -37,16 +35,16 @@ def get_access_token_by_id(token_id: int) -> AccessToken:
     """Look up an AccessToken by ID. Raises TokenNotFoundError if missing."""
     try:
         return AccessToken.objects.select_related("content__event").get(pk=token_id)
-    except AccessToken.DoesNotExist:
-        raise TokenNotFoundError("Token not found.")
+    except AccessToken.DoesNotExist as exc:
+        raise TokenNotFoundError("Token not found.") from exc
 
 
 def get_access_token_by_token(token_str: str) -> AccessToken:
-    """Look up an AccessToken by its token string. Raises TokenNotFoundError if missing."""
+    """Look up an AccessToken by token string. Raises TokenNotFoundError if missing."""
     try:
         return AccessToken.objects.select_related("content__event").get(token=token_str)
-    except AccessToken.DoesNotExist:
-        raise TokenNotFoundError("Token not found.")
+    except AccessToken.DoesNotExist as exc:
+        raise TokenNotFoundError("Token not found.") from exc
 
 
 def validate_token_access(token: AccessToken) -> None:
