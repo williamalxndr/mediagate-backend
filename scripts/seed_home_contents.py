@@ -40,22 +40,10 @@ Event.objects.all().delete()
 
 EVENT_NAME = "Stand Up Malam Minggu"
 
-CONTENTS = [
-    {
-        "title": "STAND UP COMEDY GE PAMUNGKAS",
-        "file_path": "samples/sutc-ge-pamungkas.mp4",
-        "price": 75000,
-    },
-    {
-        "title": "STAND UP COMEDY ARIE KRITING",
-        "file_path": "samples/sutc-arie-kriting.mp4",
-        "price": 75000,
-    },
-    {
-        "title": "STAND UP COMEDY ERNEST PRAKASA",
-        "file_path": "samples/sutc-ernest-prakasa.mp4",
-        "price": 75000,
-    },
+CONTENTS: list[tuple[str, str, int]] = [
+    ("STAND UP COMEDY GE PAMUNGKAS", "samples/sutc-ge-pamungkas.mp4", 75000),
+    ("STAND UP COMEDY ARIE KRITING", "samples/sutc-arie-kriting.mp4", 75000),
+    ("STAND UP COMEDY ERNEST PRAKASA", "samples/sutc-ernest-prakasa.mp4", 75000),
 ]
 
 event = Event.objects.create(
@@ -65,12 +53,12 @@ event = Event.objects.create(
 )
 print(f"OK  Event: {event.name}")
 
-for c in CONTENTS:
+for title, file_path, price in CONTENTS:
     content = Content.objects.create(
         event=event,
-        title=str(c["title"]),
-        file_path=str(c["file_path"]),
-        price=int(c["price"]) if c["price"] is not None else None,
+        title=title,
+        file_path=file_path,
+        price=price,
         duration_limit=ONE_WEEK,
     )
     print(f"    └─ {content.title} (Rp {content.price:,})")
