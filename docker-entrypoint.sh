@@ -1,23 +1,26 @@
 #!/bin/sh
 set -e
 
-if [ -n "$DATABASE_URL" ]; then
-    python - <<'PY'
+python - <<'PY'
 import os
 import sys
 import time
 
-import psycopg
+import django
+from django.db import connection
+from django.db.utils import OperationalError
 
-dsn = os.environ["DATABASE_URL"]
 deadline = time.monotonic() + int(os.environ.get("DB_WAIT_TIMEOUT", "60"))
 last_error = None
 
+django.setup()
+
 while time.monotonic() < deadline:
     try:
-        with psycopg.connect(dsn, connect_timeout=5):
-            break
-    except psycopg.OperationalError as exc:
+        connection.ensure_connection()
+        connection.close()
+        break
+    except OperationalError as exc:
         last_error = exc
         time.sleep(2)
 else:
@@ -26,7 +29,6 @@ else:
         print(last_error, file=sys.stderr)
     sys.exit(1)
 PY
-fi
 
 python manage.py migrate --noinput
 python manage.py collectstatic --noinput
