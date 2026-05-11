@@ -1,9 +1,16 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.http import JsonResponse
 from django.urls import include, path
 
+
+def api_home(_request):
+    return JsonResponse({"message": "API is running"})
+
+
 urlpatterns = [
+    path("", api_home, name="api-home"),
     path("admin/", admin.site.urls),
     path("api/", include("config.api_urls")),
 ]
